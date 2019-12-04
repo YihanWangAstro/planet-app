@@ -21,15 +21,18 @@ auto collision = [](auto &ptc) -> bool {
   return false;
 };
 
-void single_single(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
+void single_single(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s,
+                   double m_s1) {
   std::fstream out_file{workdir + ".txt", std::fstream::out};
 
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
 
+  double r_s1 = stellar::stellar_radius(stellar::StarType::STAR, m_s1);
+
   double const delta = 1e-5;
 
   for (size_t i = 0; i < sim_num; ++i) {
-    Particle sun{m_star, r_d}, jupiter{1_Mj, 1_Rj}, star1{m_star, r_d};
+    Particle sun{m_star, r_d}, jupiter{1_Mj, 1_Rj}, star1{m_s1, r_s1};
 
     auto jupiter_orbit = EllipOrbit{sun.mass, jupiter.mass, a_j, 0, isotherm, isotherm, isotherm, isotherm};
 
@@ -60,15 +63,18 @@ void single_single(std::string workdir, size_t sim_num, double m_star, double a_
   }
 }
 
-void single_binary(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s , double m_s1) {
+void single_binary(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s,
+                   double m_s1) {
   std::fstream out_file{workdir + ".txt", std::fstream::out};
 
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
 
+  double r_s1 = stellar::stellar_radius(stellar::StarType::STAR, m_s1);
+
   double const delta = 1e-5;
 
   for (size_t i = 0; i < sim_num; ++i) {
-    Particle sun{m_star, r_d}, jupiter{1_Mj, 1_Rj}, star1{m_star, r_d}, star2{m_star, r_d};
+    Particle sun{m_star, r_d}, jupiter{1_Mj, 1_Rj}, star1{m_s1, r_s1}, star2{m_s1, r_s1};
 
     auto jupiter_orbit = EllipOrbit{sun.mass, jupiter.mass, a_j, 0, isotherm, isotherm, isotherm, isotherm};
 
@@ -104,17 +110,20 @@ void single_binary(std::string workdir, size_t sim_num, double m_star, double a_
   }
 }
 
-void binary_single(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
+void binary_single(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s,
+                   double m_s1) {
   if (3.7 * a_j > a_s) return;
 
   std::fstream out_file{workdir + ".txt", std::fstream::out};
 
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
 
+  double r_s1 = stellar::stellar_radius(stellar::StarType::STAR, m_s1);
+
   double const delta = 1e-5;
 
   for (size_t i = 0; i < sim_num; ++i) {
-    Particle sun{m_star, r_d}, sun2{m_star, r_d}, jupiter{1_Mj, 1_Rj}, star1{m_star, r_d};
+    Particle sun{m_star, r_d}, sun2{m_star, r_d}, jupiter{1_Mj, 1_Rj}, star1{m_s1, r_s1};
 
     auto jupiter_orbit = EllipOrbit{sun.mass, jupiter.mass, a_j, 0, isotherm, isotherm, isotherm, isotherm};
 
@@ -152,17 +161,20 @@ void binary_single(std::string workdir, size_t sim_num, double m_star, double a_
   }
 }
 
-void binary_binary(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
+void binary_binary(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s,
+                   double m_s1) {
   if (3.7 * a_j > a_s) return;
 
   std::fstream out_file{workdir + ".txt", std::fstream::out};
 
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
 
+  double r_s1 = stellar::stellar_radius(stellar::StarType::STAR, m_s1);
+
   double const delta = 1e-5;
 
   for (size_t i = 0; i < sim_num; ++i) {
-    Particle sun{m_star, r_d}, sun2{m_star, r_d}, jupiter{1_Mj, 1_Rj}, star1{m_star, r_d}, star2{m_star, r_d};
+    Particle sun{m_star, r_d}, sun2{m_star, r_d}, jupiter{1_Mj, 1_Rj}, star1{m_s1, r_s1}, star2{m_s1, r_s1};
 
     auto jupiter_orbit = EllipOrbit{sun.mass, jupiter.mass, a_j, 0, isotherm, isotherm, isotherm, isotherm};
 
