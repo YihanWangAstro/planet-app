@@ -21,7 +21,7 @@ auto collision = [](auto &ptc) -> bool {
   return false;
 };
 
-void single_single(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s) {
+void single_single(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
   std::fstream out_file{workdir + ".txt", std::fstream::out};
 
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
@@ -60,7 +60,7 @@ void single_single(std::string workdir, size_t sim_num, double m_star, double a_
   }
 }
 
-void single_binary(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s) {
+void single_binary(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s , double m_s1) {
   std::fstream out_file{workdir + ".txt", std::fstream::out};
 
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
@@ -104,7 +104,7 @@ void single_binary(std::string workdir, size_t sim_num, double m_star, double a_
   }
 }
 
-void binary_single(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s) {
+void binary_single(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
   if (3.7 * a_j > a_s) return;
 
   std::fstream out_file{workdir + ".txt", std::fstream::out};
@@ -152,7 +152,7 @@ void binary_single(std::string workdir, size_t sim_num, double m_star, double a_
   }
 }
 
-void binary_binary(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s) {
+void binary_binary(std::string workdir, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
   if (3.7 * a_j > a_s) return;
 
   std::fstream out_file{workdir + ".txt", std::fstream::out};
@@ -205,10 +205,10 @@ void binary_binary(std::string workdir, size_t sim_num, double m_star, double a_
   }
 }
 
-using Task = std::function<void(std::string, size_t, double, double, double, double)>;
+using Task = std::function<void(std::string, size_t, double, double, double, double, double)>;
 
 void explore(Task job, std::string const &output_name, std::string const &sim_type, size_t sim_num, double m_s,
-             double a_s) {
+             double a_s, double m_s1) {
   std::vector<std::thread> threads;
 
   for (auto v : V_INF) {
@@ -216,7 +216,7 @@ void explore(Task job, std::string const &output_name, std::string const &sim_ty
       char params[105];
       sprintf(params, "_%.1lf_%.1lf", v / kms, aj);
       std::string fname = output_name + "_" + sim_type + params;
-      threads.emplace_back(std::thread(job, fname, sim_num, m_s, aj, v, a_s));
+      threads.emplace_back(std::thread(job, fname, sim_num, m_s, aj, v, a_s, m_s1));
     }
   }
 
@@ -229,21 +229,21 @@ int main(int argc, char **argv) {
   size_t sim_num;
   std::string output_name;
   std::string sim_type;
-  double a_s, m_s;
+  double a_s, m_s, m_s1;
 
-  tools::read_command_line(argc, argv, sim_type, sim_num, output_name, a_s, m_s);
+  tools::read_command_line(argc, argv, sim_type, sim_num, output_name, a_s, m_s, m_s1);
 
   a_s *= unit::AU;
   m_s *= unit::Ms;
 
   if (sim_type == "ss") {
-    explore(single_single, output_name, "ss", sim_num, m_s, a_s);
+    explore(single_single, output_name, "ss", sim_num, m_s, a_s, m_s1);
   } else if (sim_type == "sb") {
-    explore(single_binary, output_name, "sb", sim_num, m_s, a_s);
+    explore(single_binary, output_name, "sb", sim_num, m_s, a_s, m_s1);
   } else if (sim_type == "bs") {
-    explore(binary_single, output_name, "bs", sim_num, m_s, a_s);
+    explore(binary_single, output_name, "bs", sim_num, m_s, a_s, m_s1);
   } else if (sim_type == "bb") {
-    explore(binary_binary, output_name, "bb", sim_num, m_s, a_s);
+    explore(binary_binary, output_name, "bb", sim_num, m_s, a_s, m_s1);
   } else {
     std::cout << "undefined sim type!\n";
   }
