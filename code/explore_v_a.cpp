@@ -6,6 +6,8 @@ using ParticleSys = spacex::SpaceXsim::RunArgs::ParticleSys;
 
 USING_NAMESPACE_SPACEHUB_ALL;
 
+constexpr bool coll_detect = false;
+
 std::array<double, 10> V_INF = {0.1_kms,         3.42222222_kms,  6.74444444_kms,  10.06666667_kms, 13.38888889_kms,
                                 16.71111111_kms, 20.03333333_kms, 23.35555556_kms, 26.67777778_kms, 30_kms};
 
@@ -50,7 +52,9 @@ void single_single(std::string workdir, size_t sim_num, double m_star, double a_
 
     spacex::SpaceXsim::RunArgs args;
 
-    args.add_stop_condition(collision);
+    if constexpr (coll_detect) {
+      args.add_stop_condition(collision);
+    }
 
     args.add_stop_condition(end_time);
 
@@ -97,7 +101,9 @@ void single_binary(std::string workdir, size_t sim_num, double m_star, double a_
 
     spacex::SpaceXsim::RunArgs args;
 
-    args.add_stop_condition(collision);
+    if constexpr (coll_detect) {
+      args.add_stop_condition(collision);
+    }
 
     args.add_stop_condition(end_time);
 
@@ -148,7 +154,9 @@ void binary_single(std::string workdir, size_t sim_num, double m_star, double a_
 
     spacex::SpaceXsim::RunArgs args;
 
-    args.add_stop_condition(collision);
+    if constexpr (coll_detect) {
+      args.add_stop_condition(collision);
+    }
 
     args.add_stop_condition(end_time);
 
@@ -203,7 +211,9 @@ void binary_binary(std::string workdir, size_t sim_num, double m_star, double a_
 
     spacex::SpaceXsim::RunArgs args;
 
-    args.add_stop_condition(collision);
+    if constexpr (coll_detect) {
+      args.add_stop_condition(collision);
+    }
 
     args.add_stop_condition(end_time);
 
