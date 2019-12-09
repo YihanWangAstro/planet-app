@@ -8,6 +8,8 @@ USING_NAMESPACE_SPACEHUB_ALL;
 
 constexpr bool coll_detect = false;
 
+constexpr double resonance_repeat = 100;
+
 std::array<double, 10> V_INF = {0.1_kms,         3.42222222_kms,  6.74444444_kms,  10.06666667_kms, 13.38888889_kms,
                                 16.71111111_kms, 20.03333333_kms, 23.35555556_kms, 26.67777778_kms, 30_kms};
 
@@ -48,7 +50,8 @@ void single_single(std::string workdir, size_t sim_num, double m_star, double a_
 
     move_to_COM_frame(sun, jupiter, star1);
 
-    double end_time = ((E_tot(sun, jupiter, star1) > 0) ? 2.0 : 10.0) * time_to_periapsis(cluster(sun, jupiter), star1);
+    double end_time =
+        ((E_tot(sun, jupiter, star1) > 0) ? 2.0 : resonance_repeat) * time_to_periapsis(cluster(sun, jupiter), star1);
 
     spacex::SpaceXsim::RunArgs args;
 
@@ -96,7 +99,7 @@ void single_binary(std::string workdir, size_t sim_num, double m_star, double a_
 
     move_to_COM_frame(sun, jupiter, star1, star2);
 
-    double end_time = ((E_tot(sun, jupiter, star1, star2) > 0) ? 2.0 : 10.0) *
+    double end_time = ((E_tot(sun, jupiter, star1, star2) > 0) ? 2.0 : resonance_repeat) *
                       time_to_periapsis(cluster(sun, jupiter), cluster(star1, star2));
 
     spacex::SpaceXsim::RunArgs args;
@@ -149,8 +152,8 @@ void binary_single(std::string workdir, size_t sim_num, double m_star, double a_
 
     move_to_COM_frame(sun, jupiter, star1, sun2);
 
-    double end_time =
-        ((E_tot(sun, jupiter, star1, sun2) > 0) ? 2.0 : 10.0) * time_to_periapsis(cluster(sun, jupiter, sun2), star1);
+    double end_time = ((E_tot(sun, jupiter, star1, sun2) > 0) ? 2.0 : resonance_repeat) *
+                      time_to_periapsis(cluster(sun, jupiter, sun2), star1);
 
     spacex::SpaceXsim::RunArgs args;
 
@@ -206,7 +209,7 @@ void binary_binary(std::string workdir, size_t sim_num, double m_star, double a_
 
     move_to_COM_frame(sun, jupiter, star1, sun2, star2);
 
-    double end_time = ((E_tot(sun, jupiter, star1, sun2, star2) > 0) ? 2.0 : 10.0) *
+    double end_time = ((E_tot(sun, jupiter, star1, sun2, star2) > 0) ? 2.0 : resonance_repeat) *
                       time_to_periapsis(cluster(sun, jupiter, sun2), cluster(star1, star2));
 
     spacex::SpaceXsim::RunArgs args;
