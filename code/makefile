@@ -1,4 +1,4 @@
-all: explore
+all: explore mass
 
 VPATH =${MY_REPO_PATH}/SpaceX:${MY_REPO_PATH}/SpaceHub/src/
 CXX = g++
@@ -15,6 +15,9 @@ INCL = dynamicSystem.h macros.h chain.h\
 
 explore : $(OBJS) explore_v_a.o
 	$(CXX) -std=c++17 -O3 -o explore.ex $(OBJS) explore_v_a.o -pthread
+
+mass : $(OBJS) explore_mass.o
+	$(CXX) -std=c++17 -O3 -o explore_mass.ex $(OBJS) explore_mass.o -pthread
 
 
 $(OBJS) : $(INCL)
