@@ -1,4 +1,4 @@
-all: explore mass
+all: explore mass ueq_long
 
 VPATH =${MY_REPO_PATH}/SpaceX:${MY_REPO_PATH}/SpaceHub/src/
 CXX = g++
@@ -19,6 +19,8 @@ explore : $(OBJS) explore_v_a.o
 mass : $(OBJS) explore_mass.o
 	$(CXX) -std=c++17 -O3 -o explore_mass.ex $(OBJS) explore_mass.o -pthread
 
+ueq_long: $(OBJS) ueq_longer.o
+	$(CXX) -std=c++17 -O3 -o ueq_longer.ex $(OBJS) ueq_longer.o -pthread
 
 $(OBJS) : $(INCL)
 .PHONY : clean	
