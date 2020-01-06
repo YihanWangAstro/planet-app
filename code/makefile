@@ -1,4 +1,4 @@
-all: explore mass ueq_long
+all: explore mass ueq_long evn
 
 VPATH =${MY_REPO_PATH}/SpaceX:${MY_REPO_PATH}/SpaceHub/src/
 CXX = g++
@@ -21,6 +21,9 @@ mass : $(OBJS) explore_mass.o
 
 ueq_long: $(OBJS) ueq_longer.o
 	$(CXX) -std=c++17 -O3 -o ueq_longer.ex $(OBJS) ueq_longer.o -pthread
+
+evn: $(OBJS) evn-distro.o
+	$(CXX) -std=c++17 -O3 -o evn-distro.ex $(OBJS) evn-distro.o -pthread
 
 $(OBJS) : $(INCL)
 .PHONY : clean	
