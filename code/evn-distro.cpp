@@ -65,8 +65,7 @@ void single_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     args.add_stop_condition(end_time);
 
-    args.add_stop_point_operation(
-        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, "\r\n"); });
+    args.add_stop_point_operation([&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, jupiter, star1};
 
@@ -74,7 +73,7 @@ void single_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
   }
 }
 
-void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
+void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, double sigma, double a_s, double m_s1) {
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
 
   double r_s1 = stellar::stellar_radius(stellar::StarType::STAR, m_s1);
@@ -94,7 +93,8 @@ void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_particles(binary_orbit, star2);
 
-    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter), cluster(star1, star2), v_inf, delta);
+    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter), cluster(star1, star2),
+                                               space::random::Maxwellian(sigma), delta);
 
     move_particles(in_orbit, star1, star2);
 
@@ -111,9 +111,8 @@ void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     args.add_stop_condition(end_time);
 
-    args.add_stop_point_operation([&](auto &ptc) {
-      out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, "\r\n");
-    });
+    args.add_stop_point_operation(
+        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, jupiter, star1, star2};
 
@@ -121,7 +120,7 @@ void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
   }
 }
 
-void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
+void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, double sigma, double a_s, double m_s1) {
   if (3.7 * a_j > a_s) return;
 
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
@@ -145,7 +144,8 @@ void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_to_COM_frame(sun, jupiter, sun2);
 
-    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter, sun2), star1, v_inf, delta);
+    auto in_orbit =
+        scattering::incident_orbit(cluster(sun, jupiter, sun2), star1, space::random::Maxwellian(sigma), delta);
 
     move_particles(in_orbit, star1);
 
@@ -162,9 +162,8 @@ void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     args.add_stop_condition(end_time);
 
-    args.add_stop_point_operation([&](auto &ptc) {
-      out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, "\r\n");
-    });
+    args.add_stop_point_operation(
+        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, sun2, jupiter, star1};
 
@@ -172,7 +171,7 @@ void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
   }
 }
 
-void binary_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, double v_inf, double a_s, double m_s1) {
+void binary_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, double sigma, double a_s, double m_s1) {
   if (3.7 * a_j > a_s) return;
 
   double r_d = stellar::stellar_radius(stellar::StarType::STAR, m_star);
@@ -200,7 +199,8 @@ void binary_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_particles(binary_orbit2, star2);
 
-    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter, sun2), cluster(star1, star2), v_inf, delta);
+    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter, sun2), cluster(star1, star2),
+                                               space::random::Maxwellian(sigma), delta);
 
     move_particles(in_orbit, star1, star2);
 
@@ -228,7 +228,7 @@ void binary_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 }
 
 void explore(std::string const &output_name, std::string const &sim_type, size_t sim_num, double m_s, double a_s,
-             double m_s1, double aj, double v) {
+             double m_s1, double aj, double sigma) {
   auto ss_file = make_thread_safe_fstream(output_name + "_" + sim_type + "_ss.txt", std::fstream::out);
   auto sb_file = make_thread_safe_fstream(output_name + "_" + sim_type + "_sb.txt", std::fstream::out);
   auto bs_file = make_thread_safe_fstream(output_name + "_" + sim_type + "_bs.txt", std::fstream::out);
@@ -239,16 +239,16 @@ void explore(std::string const &output_name, std::string const &sim_type, size_t
   auto thread_num = machine_thread_num / 4;
 
   for (size_t i = 0; i < thread_num; ++i)
-    threads.emplace_back(std::thread(single_single, ss_file, sim_num, m_s, aj, v, a_s, m_s1));
+    threads.emplace_back(std::thread(single_single, ss_file, sim_num, m_s, aj, sigma, a_s, m_s1));
 
   for (size_t i = 0; i < thread_num; ++i)
-    threads.emplace_back(std::thread(single_binary, sb_file, sim_num, m_s, aj, v, a_s, m_s1));
+    threads.emplace_back(std::thread(single_binary, sb_file, sim_num, m_s, aj, sigma, a_s, m_s1));
 
   for (size_t i = 0; i < thread_num; ++i)
-    threads.emplace_back(std::thread(binary_single, bs_file, sim_num, m_s, aj, v, a_s, m_s1));
+    threads.emplace_back(std::thread(binary_single, bs_file, sim_num, m_s, aj, sigma, a_s, m_s1));
 
   for (size_t i = 0; i < thread_num; ++i)
-    threads.emplace_back(std::thread(binary_binary, bb_file, sim_num, m_s, aj, v, a_s, m_s1));
+    threads.emplace_back(std::thread(binary_binary, bb_file, sim_num, m_s, aj, sigma, a_s, m_s1));
 
   for (auto &th : threads) {
     th.join();
@@ -266,14 +266,14 @@ int main(int argc, char **argv) {
   a_s *= unit::AU;
   m_s *= unit::Ms;
 
-  double const v_factor = sqrt(8 / consts::pi);
+  // double const v_factor = sqrt(8 / consts::pi);
 
   if (sim_type == "open") {
-    explore(output_name, "open", sim_num, m_s, a_s, m_s1, a_j_open, v_factor * signam_open);
+    explore(output_name, "open", sim_num, m_s, a_s, m_s1, a_j_open, signam_open);
   } else if (sim_type == "field") {
-    explore(output_name, "filed", sim_num, m_s, a_s, m_s1, a_j_field, v_factor * sigma_field);
+    explore(output_name, "filed", sim_num, m_s, a_s, m_s1, a_j_field, sigma_field);
   } else if (sim_type == "globular") {
-    explore(output_name, "globular", sim_num, m_s, a_s, m_s1, a_j_globular, v_factor * sigma_globular);
+    explore(output_name, "globular", sim_num, m_s, a_s, m_s1, a_j_globular, sigma_globular);
   } else {
     std::cout << "undefined sim type!\n";
   }
