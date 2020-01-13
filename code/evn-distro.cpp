@@ -54,7 +54,7 @@ void single_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     auto b_max = scattering::b_max(cluster(sun, jupiter), star1, v_inf, interact_factor);
 
-    in_orbit = scattering::incident_orbit(cluster(sun, jupiter), star1, v_inf, b_max, delta);
+    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter), star1, v_inf, b_max, delta);
 
     move_particles(in_orbit, star1);
 
