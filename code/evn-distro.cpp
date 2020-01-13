@@ -8,7 +8,7 @@ USING_NAMESPACE_SPACEHUB_ALL;
 
 constexpr bool coll_detect = true;
 
-constexpr double resonance_repeat = 100;
+constexpr double resonance_repeat = 20;
 
 constexpr double sigma_field = 30_kms;
 
@@ -71,7 +71,8 @@ void single_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     args.add_stop_condition(end_time);
 
-    args.add_stop_point_operation([&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, b_max, "\r\n"); });
+    args.add_stop_point_operation(
+        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, b_max, v_inf, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, jupiter, star1};
 
@@ -121,7 +122,7 @@ void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
     args.add_stop_condition(end_time);
 
     args.add_stop_point_operation(
-        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, b_max, "\r\n"); });
+        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, b_max, v_inf, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, jupiter, star1, star2};
 
@@ -175,7 +176,7 @@ void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
     args.add_stop_condition(end_time);
 
     args.add_stop_point_operation(
-        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, b_max, "\r\n"); });
+        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, b_max, v_inf, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, sun2, jupiter, star1};
 
@@ -233,7 +234,7 @@ void binary_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
     args.add_stop_condition(end_time);
 
     args.add_stop_point_operation([&](auto &ptc) {
-      out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, binary_orbit2, b_max, "\r\n");
+      out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, binary_orbit2, b_max, v_inf, "\r\n");
     });
 
     spacex::SpaceXsim simulator{0, sun, sun2, jupiter, star1, star2};
