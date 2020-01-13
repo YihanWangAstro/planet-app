@@ -8,7 +8,7 @@ USING_NAMESPACE_SPACEHUB_ALL;
 
 constexpr bool coll_detect = true;
 
-constexpr double resonance_repeat = 20;
+constexpr double resonance_repeat = 10;
 
 constexpr double sigma_field = 30_kms;
 
