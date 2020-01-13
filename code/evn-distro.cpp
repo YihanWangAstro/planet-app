@@ -22,6 +22,8 @@ constexpr double a_j_globular = 0.1_AU;
 
 constexpr double a_j_open = 1_AU;
 
+constexpr double interact_factor = 0.02;
+
 auto collision = [](auto &ptc) -> bool {
   size_t number = ptc.number();
   for (size_t i = 0; i < number; ++i) {
@@ -48,7 +50,7 @@ void single_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_to_COM_frame(sun, jupiter);
 
-    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter), star1, space::random::Maxwellian(sigma), delta);
+    auto [b_max, in_orbit] = scattering::incident_orbit(cluster(sun, jupiter), star1, space::random::Maxwellian(sigma), delta, interact_factor);
 
     move_particles(in_orbit, star1);
 
@@ -65,7 +67,7 @@ void single_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     args.add_stop_condition(end_time);
 
-    args.add_stop_point_operation([&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, "\r\n"); });
+    args.add_stop_point_operation([&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, b_max, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, jupiter, star1};
 
@@ -93,8 +95,8 @@ void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_particles(binary_orbit, star2);
 
-    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter), cluster(star1, star2),
-                                               space::random::Maxwellian(sigma), delta);
+    auto [b_max, in_orbit] = scattering::incident_orbit(cluster(sun, jupiter), cluster(star1, star2),
+                                               space::random::Maxwellian(sigma), delta, interact_factor);
 
     move_particles(in_orbit, star1, star2);
 
@@ -112,7 +114,7 @@ void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
     args.add_stop_condition(end_time);
 
     args.add_stop_point_operation(
-        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, "\r\n"); });
+        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, b_max, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, jupiter, star1, star2};
 
@@ -144,8 +146,8 @@ void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_to_COM_frame(sun, jupiter, sun2);
 
-    auto in_orbit =
-        scattering::incident_orbit(cluster(sun, jupiter, sun2), star1, space::random::Maxwellian(sigma), delta);
+    auto [b_max, in_orbit] =
+        scattering::incident_orbit(cluster(sun, jupiter, sun2), star1, space::random::Maxwellian(sigma), delta, interact_factor);
 
     move_particles(in_orbit, star1);
 
@@ -163,7 +165,7 @@ void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
     args.add_stop_condition(end_time);
 
     args.add_stop_point_operation(
-        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, "\r\n"); });
+        [&](auto &ptc) { out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, b_max, "\r\n"); });
 
     spacex::SpaceXsim simulator{0, sun, sun2, jupiter, star1};
 
@@ -199,8 +201,8 @@ void binary_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_particles(binary_orbit2, star2);
 
-    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter, sun2), cluster(star1, star2),
-                                               space::random::Maxwellian(sigma), delta);
+    auto [b_max, in_orbit] = scattering::incident_orbit(cluster(sun, jupiter, sun2), cluster(star1, star2),
+                                               space::random::Maxwellian(sigma), delta, interact_factor);
 
     move_particles(in_orbit, star1, star2);
 
@@ -218,7 +220,7 @@ void binary_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
     args.add_stop_condition(end_time);
 
     args.add_stop_point_operation([&](auto &ptc) {
-      out_file << PACK(i, ' ', ptc, ' ', jupiter_orbit, ' ', in_orbit, ' ', binary_orbit, ' ', binary_orbit2, "\r\n");
+      out_file << PACK(i, ptc, jupiter_orbit, in_orbit, binary_orbit, binary_orbit2, b_max, "\r\n");
     });
 
     spacex::SpaceXsim simulator{0, sun, sun2, jupiter, star1, star2};
