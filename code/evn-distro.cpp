@@ -50,7 +50,11 @@ void single_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_to_COM_frame(sun, jupiter);
 
-    auto [b_max, in_orbit] = scattering::incident_orbit(cluster(sun, jupiter), star1, space::random::Maxwellian(sigma), delta, interact_factor);
+    auto v_inf = space::random::Maxwellian(sigma);
+
+    auto b_max = scattering::b_max(cluster(sun, jupiter), star1, v_inf, interact_factor);
+
+    in_orbit = scattering::incident_orbit(cluster(sun, jupiter), star1, v_inf, b_max, delta);
 
     move_particles(in_orbit, star1);
 
@@ -95,8 +99,11 @@ void single_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_particles(binary_orbit, star2);
 
-    auto [b_max, in_orbit] = scattering::incident_orbit(cluster(sun, jupiter), cluster(star1, star2),
-                                               space::random::Maxwellian(sigma), delta, interact_factor);
+    auto v_inf = space::random::Maxwellian(sigma);
+
+    auto b_max = scattering::b_max(cluster(sun, jupiter), cluster(star1, star2), v_inf, interact_factor);
+
+    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter), cluster(star1, star2), v_inf, b_max, delta);
 
     move_particles(in_orbit, star1, star2);
 
@@ -146,8 +153,11 @@ void binary_single(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_to_COM_frame(sun, jupiter, sun2);
 
-    auto [b_max, in_orbit] =
-        scattering::incident_orbit(cluster(sun, jupiter, sun2), star1, space::random::Maxwellian(sigma), delta, interact_factor);
+    auto v_inf = space::random::Maxwellian(sigma);
+
+    auto b_max = scattering::b_max(cluster(sun, jupiter, sun2), star1, v_inf, interact_factor);
+
+    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter, sun2), star1, v_inf, b_max, delta);
 
     move_particles(in_orbit, star1);
 
@@ -201,8 +211,11 @@ void binary_binary(ConFile out_file, size_t sim_num, double m_star, double a_j, 
 
     move_particles(binary_orbit2, star2);
 
-    auto [b_max, in_orbit] = scattering::incident_orbit(cluster(sun, jupiter, sun2), cluster(star1, star2),
-                                               space::random::Maxwellian(sigma), delta, interact_factor);
+    auto v_inf = space::random::Maxwellian(sigma);
+
+    auto b_max = scattering::b_max(cluster(sun, jupiter, sun2), cluster(star1, star2), v_inf, interact_factor);
+
+    auto in_orbit = scattering::incident_orbit(cluster(sun, jupiter, sun2), cluster(star1, star2), v_inf, b_max, delta);
 
     move_particles(in_orbit, star1, star2);
 
