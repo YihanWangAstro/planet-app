@@ -6,9 +6,9 @@ using ParticleSys = spacex::SpaceXsim::RunArgs::ParticleSys;
 
 USING_NAMESPACE_SPACEHUB_ALL;
 
-constexpr bool coll_detect = false;
+constexpr bool coll_detect = true;
 
-constexpr double resonance_repeat = 100;
+constexpr double resonance_repeat = 20;
 
 std::array<double, 10> V_INF = {0.1_kms,         3.42222222_kms,  6.74444444_kms,  10.06666667_kms, 13.38888889_kms,
                                 16.71111111_kms, 20.03333333_kms, 23.35555556_kms, 26.67777778_kms, 30_kms};
