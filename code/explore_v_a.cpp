@@ -248,6 +248,7 @@ void explore(Task job, std::string const &output_name, std::string const &sim_ty
   for (auto &th : threads) {
     th.join();
   }
+  
 }
 
 int main(int argc, char **argv) {
