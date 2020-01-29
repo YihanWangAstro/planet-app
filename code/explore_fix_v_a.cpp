@@ -10,9 +10,9 @@ constexpr bool coll_detect = true;
 
 constexpr double resonance_repeat = 20;
 
-std::array<double, 8> V_INF = {0.1_kms, 1_kms, 3.42222222_kms, 6.74444444_kms, 10_kms, 20_kms, 25_kms, 30_kms};
+double V_INF = 0.1_kms;
 
-std::array<double, 5> AJ = {0.1_AU, 0.5_AU, 1_AU, 2_AU, 5_AU};
+double AJ = 0.1_AU;
 
 auto collision = [](auto &ptc) -> bool {
   size_t number = ptc.number();
@@ -235,13 +235,11 @@ void explore(Task job, std::string const &output_name, std::string const &sim_ty
              double a_s, double m_s1) {
   std::vector<std::thread> threads;
 
-  for (auto v : V_INF) {
-    for (auto aj : AJ) {
-      char params[105];
-      sprintf(params, "_%.1lf_%.1lf", v / kms, aj);
-      std::string fname = output_name + "_" + sim_type + params;
-      threads.emplace_back(std::thread(job, fname, sim_num, m_s, aj, v, a_s, m_s1));
-    }
+  for (size_t i = 0; i < machine_thread_num; ++i) {
+    char params[105];
+    sprintf(params, "_%.1lf_%.1lf_%u", V_INF / kms, AJ, i);
+    std::string fname = output_name + "_" + sim_type + params;
+    threads.emplace_back(std::thread(job, fname, sim_num, m_s, AJ, V_INF, a_s, m_s1));
   }
 
   for (auto &th : threads) {
@@ -255,10 +253,12 @@ int main(int argc, char **argv) {
   std::string sim_type;
   double a_s, m_s, m_s1;
 
-  tools::read_command_line(argc, argv, sim_type, sim_num, output_name, a_s, m_s, m_s1);
+  tools::read_command_line(argc, argv, sim_type, sim_num, output_name, a_s, m_s, m_s1, AJ, V_INF);
 
   a_s *= unit::AU;
   m_s *= unit::Ms;
+  AJ *= unit::AU;
+  V_INF *= unit::kms;
 
   if (sim_type == "ss") {
     explore(single_single, output_name, "ss", sim_num, m_s, a_s, m_s1);

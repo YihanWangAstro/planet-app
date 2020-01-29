@@ -1,4 +1,4 @@
-all: explore mass ueq_long evn pure_star
+all: explore mass ueq_long evn pure_star explore_fix
 
 VPATH =${MY_REPO_PATH}/SpaceX:${MY_REPO_PATH}/SpaceHub/src/
 CXX = g++
@@ -15,6 +15,9 @@ INCL = dynamicSystem.h macros.h chain.h\
 
 explore : $(OBJS) explore_v_a.o
 	$(CXX) -std=c++17 -O3 -o explore.ex $(OBJS) explore_v_a.o -pthread
+
+explore_fix : $(OBJS) explore_fix_v_a.o
+	$(CXX) -std=c++17 -O3 -o explore_fix.ex $(OBJS) explore_fix_v_a.o -pthread
 
 mass : $(OBJS) explore_mass.o
 	$(CXX) -std=c++17 -O3 -o explore_mass.ex $(OBJS) explore_mass.o -pthread
