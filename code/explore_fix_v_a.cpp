@@ -237,7 +237,7 @@ void explore(Task job, std::string const &output_name, std::string const &sim_ty
 
   for (size_t i = 0; i < machine_thread_num; ++i) {
     char params[105];
-    sprintf(params, "_%.1lf_%.1lf_%u", V_INF / kms, AJ, i);
+    sprintf(params, "_%.1lf_%.1lf_%lu", V_INF / kms, AJ, i);
     std::string fname = output_name + "_" + sim_type + params;
     threads.emplace_back(std::thread(job, fname, sim_num, m_s, AJ, V_INF, a_s, m_s1));
   }
