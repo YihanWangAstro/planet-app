@@ -10,9 +10,9 @@ constexpr bool coll_detect = true;
 
 constexpr double resonance_repeat = 20;
 
-std::array<double, 8> V_INF = {0.1_kms, 1_kms, 3.42222222_kms, 6.74444444_kms, 10_kms, 20_kms, 25_kms, 30_kms};
+std::array<double, 8> V_INF = {0.1_kms, 1.0_kms, 2.0_kms, 5.0_kms, 10.0_kms, 20.0_kms, 25.0_kms, 30.0_kms};
 
-std::array<double, 5> AJ = {0.1_AU, 0.5_AU, 1_AU, 2_AU, 5_AU};
+std::array<double, 5> AJ = {0.1_AU, 0.5_AU, 1.0_AU, 2.0_AU, 5.0_AU};
 
 auto collision = [](auto &ptc) -> bool {
   size_t number = ptc.number();
